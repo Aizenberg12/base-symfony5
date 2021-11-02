@@ -1,0 +1,42 @@
+api_platform:
+    title: 'Base App'
+    version: '0.1.0'
+    collection:
+      pagination:
+        client_items_per_page: true # Disabled by default
+        items_per_page_parameter_name: limit # Default value
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    swagger:
+        versions: [2]
+        api_keys:
+          apiKey:
+            name: Authorization
+            type: header
+    formats:
+      json:
+        mime_types: ['application/json']
+      jsonapi:
+        mime_types: ['application/vnd.api+json']
+      jsonld:
+        mime_types: ['application/ld+json']
+      html:
+        mime_types: ['text/html']
+      form-data:
+        mime_types: ['multipart/form-data']
+
+    oauth:
+      # To enable or disable oauth.
+      enabled: true
+      # The oauth client id.
+      clientId: '1_123'
+      # The oauth client secret.
+      clientSecret: '123'
+      # The oauth type.
+      type: 'oauth2'
+      # The oauth flow grant type.
+      flow: 'password'
+      # The oauth token url.
+      tokenUrl: '/oauth/v2/token'

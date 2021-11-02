@@ -1,0 +1,8 @@
+twig:
+    paths: ['%kernel.project_dir%/templates']
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    default_path: '%kernel.project_dir%/templates'
+    globals:
+        reset_password_endpoint: '%env(RESET_PASSWORD_ENDPOINT)%'
+        confirm_email_endpoint: '%env(CONFIRM_EMAIL_ENDPOINT)%'

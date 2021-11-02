@@ -1,0 +1,49 @@
+security:
+    encoders:
+        App\Entity\User\User: native
+    providers:
+#        users_in_memory: { memory: null }
+        webant_userbundle:
+            id: webant.user_bundle.user_provider.email
+    firewalls:
+        api:
+            pattern:    ^/api
+            fos_oauth:  true
+            stateless:  true
+            anonymous:  true # note that anonymous access is now enabled
+            provider: webant_userbundle
+
+        oauth_token:
+            pattern:    ^/oauth/v2/token
+            security:   false
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: true
+            lazy: true
+#            provider: users_in_memory
+            # activate different ways to authenticate
+            # https://symfony.com/doc/current/security.html#firewalls-authentication
+
+            # https://symfony.com/doc/current/security/impersonating_user.html
+            # switch_user: true
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/api/files, method: [ POST, DELETE ], roles: [ ROLE_ADMIN ] }
+        - { path: ^/api/users/current, method: [ GET ], roles: [ ROLE_USER ] }
+        - { path: ^/api/users/confirm, method: [ PATCH ], roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/api/users/confirm, method: [ GET, POST, PUT, PATCH ], roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/api/users/reset-password/new-password, method: [ PATCH ], roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/api/users, method: [ POST ], roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+        - { path: ^/api/users, method: [ DELETE, GET ], roles: [ ROLE_ADMIN ] }
+        - { path: ^/api/users, method: [ PUT ], roles: [ ROLE_USER ] }
+        - { path: ^/api/events/add-time, method: [ POST ], roles: [ ROLE_USER ] }
+        - { path: ^/api/events, method: [ POST, PUT, DELETE ], roles: [ ROLE_ADMIN ] }
+        - { path: ^/api/events, method: [ GET ], roles: [ IS_AUTHENTICATED_ANONYMOUSLY ] }
+
+    role_hierarchy:
+      ROLE_USER: [ IS_AUTHENTICATED_ANONYMOUSLY ]
+      ROLE_ADMIN: [ ROLE_USER ]

@@ -1,0 +1,57 @@
+# This file is the entry point to configure your own services.
+# Files in the packages/ subdirectory configure your dependencies.
+
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
+parameters:
+    locale: 'ru'
+    fos_oauth_server.server.class: App\OAuth2\OAuth2
+    reset_password_endpoint: '%env(RESET_PASSWORD_ENDPOINT)'
+    confirm_email_endpoint: '%env(CONFIRM_EMAIL_ENDPOINT)%'
+    code_phrase: '%env(CODE_PHRASE)%'
+    quiz_count_point: '%env(QUIZ_COUNT_POINT)%'
+    score_for_certificate: '%env(SCORE_FOR_CERTIFICATE)%'
+
+
+services:
+    fos_oauth_server.server:
+        class: '%fos_oauth_server.server.class%'
+        arguments:
+            - '@fos_oauth_server.storage'
+            - '%fos_oauth_server.server.options%'
+            - '@doctrine.orm.entity_manager'
+            - '@App\OAuth2\OAuthStorage'
+
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $rootDir: '%kernel.project_dir%'
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    App\:
+        resource: '../src/*'
+        exclude: '../src/{DependencyInjection,Entity,Tests,Kernel.php,Serializer}'
+
+    # controllers are imported separately to make sure services can be injected
+    # as action arguments even if you don't extend any base controller class
+    App\Controller\:
+        resource: '../src/Controller'
+        tags: ['controller.service_arguments']
+
+    api_platform.serializer.normalizer.collection:
+        class: 'App\Serializer\ApiNormalizer'
+        arguments:
+            - '@api_platform.resource_class_resolver'
+            - '%api_platform.collection.pagination.page_parameter_name%'
+        tags:
+            - { name: 'serializer.normalizer'}
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+    'App\Serializer\ContextBuilder':
+        decorates: 'api_platform.serializer.context_builder'
+        arguments:
+            $decorated: '@App\Serializer\ContextBuilder.inner'
+        autoconfigure: true

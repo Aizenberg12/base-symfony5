@@ -1,0 +1,14 @@
+webant_user:
+    model_manager_name: ~
+    user:
+      class: App\Entity\User\User
+    email:
+      enabled: true
+      address: no-reply@sfedu.ru
+      sender_name: Фестиваль науки
+    register:
+      confirmation_twig_template: confirm_registration.html.twig
+      confirmation_route: api_users_user_confirmation_collection
+    reset_password:
+      twig_template: reset_password.html.twig
+      route: api_users_user_reset_password_collection
